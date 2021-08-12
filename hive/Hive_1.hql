@@ -213,6 +213,24 @@ hdfs dfs -put dataset/empresa.data /proyectos/temporal/empresa
 select * from TEMPORAL.EMPRESA;
 
 
+---------------------------------------------
+---------------------------------------------
+-- formatos de archivos
+
+-- formatos AVRO:
+
+-- consola LINUX:
+-- creart carpeta en linux:
+mkdir esquema_avro
+
+-- crear carpeta esquema_avro en HDFS
+hdfs dfs -mkdir /proyectos/esquema_avro
+
+-- copiar esquema avro al HDFS
+hdfs dfs -put esquema_avro/cliente_avro.avsc /proyectos/esquema_avro
+
+
+
 
 
 
