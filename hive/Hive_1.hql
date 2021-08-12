@@ -66,3 +66,12 @@ STORED AS TEXTFILE;
 -- Verificamos
 SHOW TABLES IN TEMPORAL;
 
+
+-- En HDFS, listar el contenido de la carpetra 
+
+hdfs dfs -ls /proyectos/temporal
+
+
+-- En HDFS, subir el archivo LINUX 
+
+hdfs dfs -put dataset/cliente.data /proyectos/temporal/cliente
