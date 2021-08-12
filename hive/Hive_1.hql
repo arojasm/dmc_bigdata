@@ -1,51 +1,57 @@
 -- clase de Big Data - 08/2021
 --   
--- Ingresar a consola Hive con el cliente BEELINE
-
+-- Consola Hive: Ingresar a consola Hive con el cliente BEELINE
 beeline -u jdbc:hive2://
 
--- En HIVE, listamos las bases de datos existentes
+-- Consola Hive : En HIVE, listamos las bases de datos existentes
 SHOW DATABASES;
 
--- Crear base de datos 
+-- Consola Hive: Crear base de datos 
 CREATE DATABASE IF NOT EXISTS TEMP;
 
--- verificamos
+-- Consola Hive : verificamos
 SHOW DATABASES;
 
---Creamos database en un ruta pre definida e incluimos propiedades
+--Consola Hive : Creamos database en un ruta pre definida e incluimos propiedades
 CREATE DATABASE IF NOT EXISTS TEMPORAL 
 COMMENT 'Base de datos temporal'
 LOCATION '/proyectos/temporal'
 WITH DBPROPERTIES ('creator' = 'Arturo Rojas', 'date' = '2021-08-07');
 
+--Consola Hive : 
 CREATE DATABASE IF NOT EXISTS TEMPORAL2 
 COMMENT 'Base de datos temporal'
 WITH DBPROPERTIES ('creator' = 'Arturo Rojas', 'date' = '2021-08-07');
 
+--Consola Hive : 
 -- LISTAR VARIAS BASES DE DATOS
 SHOW DATABASES LIKE 'TEM.*';
 
+--Consola Hive : 
 DESCRIBE DATABASE EXTENDED TEMPORAL;
 
+--Consola Hive : 
 --ELIMINAR BASE DE DATOS VACIAS:
 DROP DATABASE IF EXISTS TEMPORAL;
 
+--Consola Hive : 
 DROP DATABASE IF EXISTS TEMPORAL2 CASCADE;
 
+--Consola Hive : 
 -- muestra los mensajes de error, comportamiento predetermindo, se debe eliminar primero las tablas:
 DROP DATABASE IF EXISTS database_name RESTRICT;
 
-
+--Consola Hive : 
 -- ALTER DATABASE:
 DESCRIBE DATABASE EXTENDED TEMPORAL;
 
+--Consola Hive : 
 -- añadiendo un propiedad clave - valor
 ALTER DATABASE TEMPORAL SET 
 DBPROPERTIES ( 'edited-by' = 'Arturo DBA');
 
+--Consola Hive : 
 -- En HIVE, creamos la tabla
-
 CREATE TABLE IF NOT EXISTS TEMPORAL.CLIENTE(
 ID STRING,
 NOMBRE STRING,
@@ -62,29 +68,26 @@ LINES TERMINATED BY '\n'
 STORED AS TEXTFILE;
 
 
-
+--Consola Hive : 
 -- Verificamos
 SHOW TABLES IN TEMPORAL;
 
-
+--Consola LINUX - HDFS : 
 -- En HDFS, listar el contenido de la carpetra 
-
 hdfs dfs -ls /proyectos/temporal
 
-
+--Consola LINUX - HDFS : 
 -- En HDFS, subir el archivo LINUX 
-
 hdfs dfs -put dataset/cliente.data /proyectos/temporal/cliente
 
+--Consola HIVE : 
 -- En HIVE, mostramos algunos registros de la tabla
 SELECT * FROM TEMPORAL.CLIENTE LIMIT 10;
-
 DESC TEMPORAL.CLIENTE;
-
 DESC FORMATTED TEMPORAL.CLIENTE;
 
+--Consola HIVE : 
 -- crear una tabla con la propiedad de saltar la primera linea
-
 CREATE TABLE IF NOT EXISTS TEMPORAL.CLIENTE_skip(
 ID STRING,
 NOMBRE STRING COMMENT "Nombre de clientes", 
@@ -102,6 +105,11 @@ LINES TERMINATED BY '\n'
 STORED AS TEXTFILE
 TBLPROPERTIES ('creator'='Arturo Rojas', 'created_at'='2020-04-18', 'skip.header.line.count'='1');
 
-
+--Consola LINUX - HDFS : 
 -- subir la data desde linux ( dataset/cliente.data)  hacia HDFS (/proyectos/temporal/cliente_skip)
 hdfs dfs -put dataset/cliente.data /proyectos/temporal/cliente_skip
+
+--Consola HIVE : 
+-- En HIVE, mostramos algunos registros de la tabla
+SELECT * FROM TEMPORAL.CLIENTE_skip LIMIT 10;
+
