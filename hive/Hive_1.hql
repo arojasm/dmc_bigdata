@@ -179,9 +179,40 @@ LOAD DATA LOCAL INPATH 'dataset/cliente.data' INTO TABLE TEMPORAL.CLIENTE_skip_e
 
 --Consola HIVE : 
 -- Consultar la tabla
-SELECT * FROM TEMPORAL.CLIENTE_skip_external LIMIT 10;
+SELECT * FROM TEMPORAL.CLIENTE_skip_external LIMIT 5;
 
 
 --Consola LINUX - HDFS : 
 -- En HDFS, listar el contenido de la carpetra 
 hdfs dfs -ls /proyectos/temporal/cliente_skip
+
+--Consola HIVE : 
+DROP TABLE TEMPORAL.CLIENTE_skip_external;
+
+
+
+
+-----------------------------------------------
+------------------------------------------------
+
+--Consola HIVE : 
+-- creamos tabla empresa
+CREATE EXTERNAL TABLE TEMPORAL.EMPRESA(
+ID STRING,
+NOMBRE STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '|'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+TBLPROPERTIES ('creator'='Arturo Rojas', 'created_at'='2021-04-24', 'skip.header.line.count'='1');
+
+-- cargamos la data
+hdfs dfs -put dataset/empresa.data /proyectos/temporal/empresa
+
+select * from TEMPORAL.EMPRESA;
+
+
+
+
+
