@@ -75,3 +75,33 @@ hdfs dfs -ls /proyectos/temporal
 -- En HDFS, subir el archivo LINUX 
 
 hdfs dfs -put dataset/cliente.data /proyectos/temporal/cliente
+
+-- En HIVE, mostramos algunos registros de la tabla
+SELECT * FROM TEMPORAL.CLIENTE LIMIT 10;
+
+DESC TEMPORAL.CLIENTE;
+
+DESC FORMATTED TEMPORAL.CLIENTE;
+
+-- crear una tabla con la propiedad de saltar la primera linea
+
+CREATE TABLE IF NOT EXISTS TEMPORAL.CLIENTE_skip(
+ID STRING,
+NOMBRE STRING COMMENT "Nombre de clientes", 
+TELEFONO STRING COMMENT "Telefono de clientes",
+CORREO STRING,
+FECHA_INGRESO STRING,
+EDAD INT,
+SALARIO DOUBLE,
+ID_EMPRESA STRING
+)
+COMMENT 'Tabla de clientes'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '|'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+TBLPROPERTIES ('creator'='Arturo Rojas', 'created_at'='2020-04-18', 'skip.header.line.count'='1');
+
+
+-- subir la data desde linux ( dataset/cliente.data)  hacia HDFS (/proyectos/temporal/cliente_skip)
+hdfs dfs -put dataset/cliente.data /proyectos/temporal/cliente_skip
