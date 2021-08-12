@@ -113,3 +113,37 @@ hdfs dfs -put dataset/cliente.data /proyectos/temporal/cliente_skip
 -- En HIVE, mostramos algunos registros de la tabla
 SELECT * FROM TEMPORAL.CLIENTE_skip LIMIT 10;
 
+--Consola HIVE : 
+DROP TABLE TEMPORAL.CLIENTE_skip;
+
+--Consola HIVE : 
+CREATE TABLE IF NOT EXISTS TEMPORAL.CLIENTE_skip(
+ID STRING,
+NOMBRE STRING COMMENT "Nombre de clientes", 
+TELEFONO STRING COMMENT "Telefono de clientes",
+CORREO STRING,
+FECHA_INGRESO STRING,
+EDAD INT,
+SALARIO DOUBLE,
+ID_EMPRESA STRING
+)
+COMMENT 'Tabla de clientes'
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '|'
+LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+TBLPROPERTIES ('creator'='Arturo Rojas', 'created_at'='2020-04-18', 'skip.header.line.count'='1');
+
+
+--Consola HIVE : 
+-- CARGAR DATA DIRECTO A UNA TABLA:
+LOAD DATA LOCAL INPATH 'dataset/cliente.data' INTO TABLE TEMPORAL.CLIENTE_skip;
+
+--Consola HIVE : 
+-- Consultar la tabla
+SELECT * FROM TEMPORAL.CLIENTE_skip LIMIT 10;
+
+
+--Consola LINUX - HDFS : 
+-- En HDFS, listar el contenido de la carpetra 
+hdfs dfs -ls /proyectos/temporal/cliente_skip
