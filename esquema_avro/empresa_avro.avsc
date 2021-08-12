@@ -1,0 +1,9 @@
+{
+  "namespace": "ARTURO",
+  "name": "EMPRESA_AVRO",
+  "type": "record",
+  "fields": [
+    {"name": "ID", "type": ["int", "null"]},
+    {"name": "NOMBRE", "type": ["string", "null"]}
+  ]
+}

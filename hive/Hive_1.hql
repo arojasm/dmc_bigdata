@@ -230,7 +230,25 @@ hdfs dfs -mkdir /proyectos/esquema_avro
 hdfs dfs -put esquema_avro/cliente_avro.avsc /proyectos/esquema_avro
 
 
+--CONSOLA HIVE:
+-- CREAR LA TABLA CLIENTES FORMATO AVRO
+
+CREATE EXTERNAL TABLE IF NOT EXISTS TEMPORAL.CLIENTE_AVRO
+STORED AS AVRO
+TBLPROPERTIES ('avro.schema.url'='hdfs:///proyectos/esquema_avro/cliente_avro.avsc', 'created_at'='2020-04-18', 'skip.header.line.count'='1');
 
 
+--- insertar data de la tabla textfile cliente_skip_external hacia la nueva tabla clinte _avro
+-- CONSOLA HIVE
+INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_AVRO
+SELECT * FROM TEMPORAL.CLIENTE_skip_external;
+
+-- CONSOLA HIVE:
+select * from TEMPORAL.CLIENTE_AVRO LIMIT 5;
+
+-- CONSOLA LINUX
+hdfs dfs -ls /proyectos/temporal/cliente_avro
 
 
+hdfs dfs -tail /proyectos/temporal/cliente_avro/000000_0
+hdfs dfs -cat /proyectos/temporal/cliente_avro/000000_0
