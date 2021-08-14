@@ -242,3 +242,6 @@ SELECT * FROM TEMPORAL.CLIENTE_PARQUET_SNAPPY LIMIT 10;
 hdfs dfs -ls /proyectos/temporal/cliente_parquet/
 hdfs dfs -ls /proyectos/temporal/cliente_parquet_snappy/
 
+
+
+
