@@ -175,3 +175,34 @@ SELECT * FROM  TEMPORAL.CLIENTE;
 -- Verificamos
 SELECT * FROM TEMPORAL.CLIENTE_ORC_SNAPPY LIMIT 10;
 
+-- CONSOLA LINUX
+hdfs dfs -ls /proyectos/temporal/cliente_orc_snappy
+
+-----------
+-- COMPRESION EN FORMATO AVRO
+-- CONSOLA HIVE
+-- Creamos la tabla
+CREATE TABLE TEMPORAL.CLIENTE_AVRO_SNAPPY
+STORED AS AVRO
+TBLPROPERTIES (
+'avro.schema.url'='hdfs:///proyectos/esquema_avro/cliente_avro.avsc',
+'avro.output.codec'='snappy'
+);
+
+-- CONSOLA HIVE
+SET hive.exec.compress.output=true;
+SET avro.output.codec=snappy;
+
+-- CONSOLA HIVE
+-- Ahora ejecutamos la sentencia de carga de datos
+INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_AVRO_SNAPPY
+SELECT * FROM  TEMPORAL.CLIENTE;
+
+-- CONSOLA HIVE
+-- Verificamos
+SELECT * FROM TEMPORAL.CLIENTE_AVRO_SNAPPY LIMIT 10;
+
+-- CONSOLA LINUX
+hdfs dfs -ls /proyectos/temporal/cliente_avro/
+hdfs dfs -ls /proyectos/temporal/cliente_avro_snappy/
+
