@@ -109,3 +109,32 @@ TBLPROPERTIES ('creator'='Arturo Rojas', 'created_at'='2021-08-14');
 INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_PARQUET
 SELECT * FROM TEMPORAL.CLIENTE;
 
+
+
+----------------------------------------
+-------------------------------------------
+-- FORMATO AVRO
+
+-- consola LINUX:
+-- creart carpeta en linux:
+mkdir esquema_avro
+
+-- crear carpeta esquema_avro en HDFS
+hdfs dfs -mkdir /proyectos/esquema_avro
+
+-- copiar esquemas avro al HDFS
+hdfs dfs -put esquema_avro/cliente_avro.avsc /proyectos/esquema_avro
+
+--CONSOLA HIVE:
+-- CREAR LA TABLA CLIENTES FORMATO AVRO
+DROP TABLE TEMPORAL.CLIENTE_AVRO;
+CREATE EXTERNAL TABLE IF NOT EXISTS TEMPORAL.CLIENTE_AVRO
+STORED AS AVRO
+TBLPROPERTIES ('avro.schema.url'='hdfs:///proyectos/esquema_avro/cliente_avro.avsc', 'created_at'='2021-08-14');
+
+
+--- insertar data de la tabla textfile cliente_ hacia la nueva tabla cliente _avro
+-- CONSOLA HIVE
+INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_AVRO
+SELECT * FROM TEMPORAL.CLIENTE;
+
