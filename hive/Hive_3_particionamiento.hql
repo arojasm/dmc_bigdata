@@ -43,5 +43,28 @@ SELECT * FROM TEMPORAL.TRANSACCION LIMIT 10;
 -- Mostramos la particiones existentes
 SHOW PARTITIONS TEMPORAL.TRANSACCION;
 
+----------------------------------
+-- CONSOLA DE LINUX - HDFS 
+--CARGAR LA DATA DEL DIA 23.
+
+-- Listemos el contenido de la carpeta HDFS de nuestra tabla
+hdfs dfs -ls /proyectos/temporal/transaccion
+
+hdfs dfs -ls /proyectos/temporal/transaccion/fecha=2018-01-21
+
+-- En la ruta HDFS de nuestra tabla, creamos la siguiente carpeta:
+hdfs dfs -mkdir -p /proyectos/temporal/transaccion/fecha=2018-01-23
+
+-- Subimos el archivo de transacciones de ese día
+hdfs dfs -put dataset/transacciones-2018-01-23.data /proyectos/temporal/transaccion/fecha=2018-01-23
+
+-- CONSOLA HIVE:
+-- Verificamos si existe la partición
+SHOW PARTITIONS TEMPORAL.TRANSACCION;
+
+-- CONSOLA HIVE:
+-- REPARAMOS LA TABLA HIVE PARA QUE AGREGE UNA PARTICION MAS
+MSCK REPAIR TABLE TEMPORAL.TRANSACCION;
+
 
 
