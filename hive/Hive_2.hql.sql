@@ -118,12 +118,12 @@ SELECT * FROM TEMPORAL.CLIENTE;
 -- consola LINUX:
 -- creart carpeta en linux:
 mkdir esquema_avro
-
 -- crear carpeta esquema_avro en HDFS
 hdfs dfs -mkdir /proyectos/esquema_avro
-
 -- copiar esquemas avro al HDFS
 hdfs dfs -put esquema_avro/cliente_avro.avsc /proyectos/esquema_avro
+
+
 
 --CONSOLA HIVE:
 -- CREAR LA TABLA CLIENTES FORMATO AVRO
@@ -137,4 +137,41 @@ TBLPROPERTIES ('avro.schema.url'='hdfs:///proyectos/esquema_avro/cliente_avro.av
 -- CONSOLA HIVE
 INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_AVRO
 SELECT * FROM TEMPORAL.CLIENTE;
+
+-- CONSOLA HIVE:
+select * from TEMPORAL.CLIENTE LIMIT 5;
+
+
+
+
+
+-----------------------------------------------------
+------------------------------------------------------
+--- COMPRESION DE DATOS - SNAPY
+
+-- CONSOLA HIVE
+CREATE TABLE TEMPORAL.CLIENTE_ORC_SNAPPY(
+ID_CLIENTE STRING,
+NOMBRE STRING,
+TELEFONO STRING,
+CORREO STRING,
+FECHA_INGRESO DATE,
+EDAD INT,
+SALARIO DOUBLE,
+ID_EMPRESA STRING
+)
+STORED AS ORC
+TBLPROPERTIES ("orc.compression"="SNAPPY");
+
+-- CONSOLA HIVE
+SET hive.exec.compress.output=true;
+SET orc.compression=SNAPPY;
+
+-- CONSOLA HIVE
+INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_ORC_SNAPPY
+SELECT * FROM  TEMPORAL.CLIENTE;
+
+-- CONSOLA HIVE
+-- Verificamos
+SELECT * FROM TEMPORAL.CLIENTE_ORC_SNAPPY LIMIT 10;
 
