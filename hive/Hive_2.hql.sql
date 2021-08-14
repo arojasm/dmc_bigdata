@@ -206,3 +206,39 @@ SELECT * FROM TEMPORAL.CLIENTE_AVRO_SNAPPY LIMIT 10;
 hdfs dfs -ls /proyectos/temporal/cliente_avro/
 hdfs dfs -ls /proyectos/temporal/cliente_avro_snappy/
 
+
+--------------------------------------
+-- COMPRESION EN FORMATO PARQUET
+
+-- CONSOLA HIVE
+-- Creación de tabla PARQUET con compresión SNAPPY
+CREATE TABLE TEMPORAL.CLIENTE_PARQUET_SNAPPY(
+ID_CLIENTE STRING,
+NOMBRE STRING,
+TELEFONO STRING,
+CORREO STRING,
+FECHA_INGRESO STRING,
+EDAD INT,
+SALARIO DOUBLE,
+ID_EMPRESA STRING
+)
+STORED AS PARQUET
+TBLPROPERTIES ("parquet.compression"="SNAPPY");
+
+SET hive.exec.compress.output=true;
+SET parquet.compression=SNAPPY;
+
+-- CONSOLA HIVE:
+-- Ahora ejecutamos la sentencia de carga de datos
+INSERT OVERWRITE TABLE TEMPORAL.CLIENTE_PARQUET_SNAPPY
+SELECT * FROM  TEMPORAL.CLIENTE;
+
+-- CONSOLA HIVE:
+-- Verificamos
+SELECT * FROM TEMPORAL.CLIENTE_PARQUET_SNAPPY LIMIT 10;
+
+-- CONSOLA LINUX:
+
+hdfs dfs -ls /proyectos/temporal/cliente_parquet/
+hdfs dfs -ls /proyectos/temporal/cliente_parquet_snappy/
+
