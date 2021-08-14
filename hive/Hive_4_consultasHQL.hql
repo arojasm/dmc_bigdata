@@ -1,5 +1,8 @@
 /*****************************************/
 ---- SENTENCIAS HQL
+--clase de Big Data / HIVE 
+-- 14/08/2021
+-- ARTURO ROJAS
 
 CREATE DATABASE IF NOT EXISTS OPERACIONAL
 COMMENT 'Base de datos OPERACIONAL'

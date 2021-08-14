@@ -1,5 +1,5 @@
--- clase de Big Data - 08/2021
---   
+-- clase de Big Data / HIVE - 08/2021
+-- ARTURO ROJAS
 -- Consola Hive: Ingresar a consola Hive con el cliente BEELINE
 beeline -u jdbc:hive2://
 
