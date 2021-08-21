@@ -114,3 +114,35 @@ df2.printSchema()
 
 df3 = spark.sql('SELECT count(*) FROM temporal.cliente')
 df3.show()
+
+
+##########################################################################################################
+# CREANDO DATAFRAME TEMPORAL CON LA INFORMACION DE CLIENTE Y TRANSACCION
+##########################################################################################################
+
+
+df4= spark.sql('SELECT T.ID_PERSONA, P.NOMBRE AS NOMBRE_PERSONA, CAST(P.EDAD AS INT) AS EDAD, CAST(P.SALARIO AS DOUBLE) AS SALARIO, T.ID_EMPRESA, CAST(T.MONTO AS DOUBLE) AS MONTO_TRANSACCION, T.FECHA FROM TEMPORAL.TRANSACCION T JOIN TEMPORAL.CLIENTE P ON T.ID_PERSONA = P.ID')
+#Mostramos el contenido de nuestra variable
+df4.show()
+df4.createOrReplaceTempView("df4")
+
+##########################################################################################################
+# CREANDO DATAFRAME TEMPORAL CON LA INFORMACION DE EMPRESA Y EL RESULTADO DEL DATAFRAME ANTERIOR
+##########################################################################################################
+
+df5 = spark.sql('SELECT T.ID_PERSONA, T.NOMBRE_PERSONA, T.EDAD, T.SALARIO, E.NOMBRE AS NOMBRE_EMPRESA, T.MONTO_TRANSACCION, T.FECHA, T.ID_EMPRESA FROM df4 T JOIN TEMPORAL.EMPRESA E ON T.ID_EMPRESA = E.ID')
+df5.show()
+df5.createOrReplaceTempView("df5")
+
+df5.printSchema()
+
+##########################################################################################################
+# CREANDO DATAFRAME TEMPORAL PARA INSERTAR LA INFORMACION EN LA TABLA TRANSACCIONES
+##########################################################################################################
+
+
+df6= spark.sql('INSERT INTO TEMPORAL.TABLON_TRANSACCIONES SELECT ID_PERSONA, NOMBRE_PERSONA, EDAD, SALARIO, ID_EMPRESA, NOMBRE_EMPRESA, MONTO_TRANSACCION, FECHA FROM df5 ')
+
+## verificamos:
+df7 = spark.sql('select * from TEMPORAL.TABLON_TRANSACCIONES')
+df7.show(20)
