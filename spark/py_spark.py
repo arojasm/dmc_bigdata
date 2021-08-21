@@ -334,3 +334,28 @@ dfJoin = dfTransaccion.alias("T").join(
 )
 
 dfJoin.show()
+
+
+
+#Agrupamos los datos
+df1 = dfData.groupBy(dfData["EDAD"]).agg(
+    f.count(dfData["EDAD"]).alias("CANTIDAD"),
+    f.min(dfData["FECHA_INGRESO"]).alias("FECHA_CONTRATO_MAS_RECIENTE"),
+    f.sum(dfData["SALARIO"]).alias("SUMA_SALARIOS"),
+    f.max(dfData["SALARIO"]).alias("SALARIO_MAYOR")
+)
+
+#Mostramos los datos
+df1.show()
+
+#Filtramos por una EDAD
+df2 = df1.filter(df1["EDAD"] > 35)
+
+#Mostramos los datos
+df2.show()
+
+#Agregamos un filtro de SUMA_SALARIOS
+df3 = df2.filter(df2["SUMA_SALARIOS"] > 50000)
+
+#Mostramos los datos
+df3.show()
