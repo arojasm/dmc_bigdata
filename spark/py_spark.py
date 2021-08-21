@@ -229,3 +229,47 @@ df2 = dfData.filter(dfData["EDAD"] > 60)
 
 #Mostramos los datos
 df2.show()
+
+#Hacemos un filtro con un "and"
+#SELECT * FROM dfData WHERE EDAD > 60 AND SALARIO > 20000
+df3 = dfData.filter((dfData["EDAD"] > 60) & (dfData["SALARIO"] > 20000))
+
+#Mostramos los datos
+df3.show()
+
+#Hacemos un filtro con un "or"
+#SELECT * FROM dfData WHERE EDAD > 60 OR SALARIO < 20
+df4 = dfData.filter((dfData["EDAD"] > 60) | (dfData["SALARIO"] < 2000))
+
+#Mostramos los datos
+df4.show()
+
+
+##########################################################################################################
+#
+# GROUP BY
+#
+##########################################################################################################
+
+#OPERACION EQUIVALENTE EN SQL:
+#SELECT 
+#	EDAD
+#	COUNT(EDAD)
+#	MIN(FECHA_INGRESO)
+#	SUM(SALARIO)
+#	MAX(SALARIO)
+#FROM
+#	dfData
+#GROUP BY
+#	EDAD
+
+#Importamos la librería de funciones
+import pyspark.sql.functions as f
+
+#GROUP BY
+df5 = dfData.groupBy(dfData["EDAD"]).agg(
+	f.count(dfData["EDAD"]), 
+	f.min(dfData["FECHA_INGRESO"]), 
+	f.sum(dfData["SALARIO"]), 
+	f.max(dfData["SALARIO"])
+)
