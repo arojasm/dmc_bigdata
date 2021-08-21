@@ -83,3 +83,34 @@ MONTO_TRANSACCION DOUBLE,
 FECHA_TRANSACCION STRING
 )
 STORED AS PARQUET;
+
+
+
+
+####################################################
+
+
+####################################################
+# Visualizamos la data de clientes
+####################################################
+
+df1 = spark.sql('SELECT * FROM temporal.cliente limit 10')
+#Mostramos el contenido de nuestra variable
+df1.show()
+df1.printSchema()
+
+##########################################################################################################
+# Visualizamos la data de clientes mayores a 25 años
+##########################################################################################################
+
+df2 = spark.sql('SELECT * FROM temporal.cliente where edad > 25')
+#Mostramos el contenido de nuestra variable
+df2.show()
+df2.printSchema()
+
+##########################################################################################################
+# Visualizamos la cantidad de clientes 
+##########################################################################################################
+
+df3 = spark.sql('SELECT count(*) FROM temporal.cliente')
+df3.show()
