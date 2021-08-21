@@ -159,3 +159,42 @@ dfDataHdfs.show()
 
 #Mostramos el esquema de la data
 dfDataHdfs.printSchema()   
+
+
+
+
+##########################################################################################################
+# Librerías
+##########################################################################################################
+
+
+from pyspark.sql.types import StructType, StructField
+
+#Importamos los tipos de datos que utilizaremos
+from pyspark.sql.types import StringType, IntegerType, DoubleType
+
+#Esta librería tiene otros tipos de datos
+from pyspark.sql.types import *
+
+#Leemos el archivo indicando el esquema definido
+dfData = spark.read.format("csv").option("header", "true").option("delimiter", "|").schema(
+    StructType(
+        [
+            StructField("ID", StringType(), True),
+            StructField("NOMBRE", StringType(), True),
+            StructField("TELEFONO", StringType(), True),
+            StructField("CORREO", StringType(), True),
+            StructField("FECHA_INGRESO", StringType(), True),
+            StructField("EDAD", IntegerType(), True),
+            StructField("SALARIO", DoubleType(), True),
+            StructField("ID_EMPRESA", StringType(), True)
+        ]
+    )
+).load("hdfs:///proyectos/temporal/cliente/cliente.data")
+
+#Mostramos la data
+dfData.show(10)
+
+#Mostramos el esquema de la data
+dfData.printSchema()
+
