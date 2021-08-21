@@ -306,3 +306,31 @@ df8 = dfData.sort(dfData["EDAD"].asc(), dfData["SALARIO"].desc())
 
 #Mostramos los datos
 df8.show()
+
+
+
+#Lectura de PERSONA
+dfPersona = spark.sql("SELECT * FROM TEMPORAL.CLIENTE")
+
+#Mostramos los datos
+dfPersona.show()
+
+#Lectura de TRANSACCIONES
+dfTransaccion = spark.sql("SELECT * FROM TEMPORAL.TRANSACCION")
+
+#Mostramos los datos
+dfTransaccion.show()
+
+#Ejecución del JOIN
+dfJoin = dfTransaccion.alias("T").join(
+	dfPersona.alias("P"), 
+	f.col("T.ID_PERSONA") == f.col("P.ID")
+).select(
+	"P.NOMBRE", 
+	"P.EDAD", 
+	"P.SALARIO", 
+	"T.MONTO", 
+	"T.FECHA"
+)
+
+dfJoin.show()
