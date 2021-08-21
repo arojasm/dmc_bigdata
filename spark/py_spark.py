@@ -146,3 +146,16 @@ df6= spark.sql('INSERT INTO TEMPORAL.TABLON_TRANSACCIONES SELECT ID_PERSONA, NOM
 ## verificamos:
 df7 = spark.sql('select * from TEMPORAL.TABLON_TRANSACCIONES')
 df7.show(20)
+
+
+##########################################################################################################
+# PROCEDIMIENTO PARA LECTURA DE ARCHIVOS PLANOS EN HDFS
+##########################################################################################################
+
+dfDataHdfs = spark.read.format("csv").option("header", "true").option("delimiter", "|").load("hdfs:///proyectos/temporal/cliente/cliente.data")
+
+#Mostramos la data
+dfDataHdfs.show()
+
+#Mostramos el esquema de la data
+dfDataHdfs.printSchema()   
