@@ -273,3 +273,36 @@ df5 = dfData.groupBy(dfData["EDAD"]).agg(
 	f.sum(dfData["SALARIO"]), 
 	f.max(dfData["SALARIO"])
 )
+
+#Mostramos los datos
+df5.show()
+
+#Revisemos el esquema, notamos que las columnas reciben nombre "extraños"
+df5.printSchema()
+
+#Colocando alias
+df6 = dfData.groupBy(dfData["EDAD"]).agg(
+	f.count(dfData["EDAD"]).alias("CANTIDAD"),
+	f.min(dfData["FECHA_INGRESO"]).alias("FECHA_CONTRATO_MAS_RECIENTE"),
+	f.sum(dfData["SALARIO"]).alias("SUMA_SALARIOS"),
+	f.max(dfData["SALARIO"]).alias("SALARIO_MAYOR")
+)
+
+#Mostramos los datos
+df6.show()
+
+#Revisamos el esquema
+df6.printSchema()
+
+
+#Ordenar ascendentemente por un campo
+df7 = dfData.sort(dfData["EDAD"].asc())
+
+#Mostramos los datos
+df7.show()
+
+#Ordenar ascendentemente y descendentemente por más de un campo
+df8 = dfData.sort(dfData["EDAD"].asc(), dfData["SALARIO"].desc())
+
+#Mostramos los datos
+df8.show()
