@@ -1,3 +1,9 @@
+
+#########################################################
+##### EJERCICIOS DE SPARK
+##### ARTURO R. 21/08/2021
+#########################################################
+
 --- conexion hive
 beeline -u jdbc:hive2://
 
@@ -78,9 +84,9 @@ NOMBRE_PERSONA STRING,
 EDAD_PERSONA INT,
 SALARIO_PERSONA DOUBLE,
 ID_EMPRESA STRING,
-NOMBRE_EMPRESA STRING,
 MONTO_TRANSACCION DOUBLE,
 FECHA_TRANSACCION STRING
+NOMBRE_EMPRESA STRING
 )
 STORED AS PARQUET;
 
@@ -359,3 +365,143 @@ df3 = df2.filter(df2["SUMA_SALARIOS"] > 50000)
 
 #Mostramos los datos
 df3.show()
+
+
+
+
+
+#También podríamos hacerlo desde sólo un paso
+dfResultado = dfData.groupBy(dfData["EDAD"]).agg(
+    f.count(dfData["EDAD"]).alias("CANTIDAD"),
+    f.min(dfData["FECHA_INGRESO"]).alias("FECHA_CONTRATO_MAS_RECIENTE"),
+    f.sum(dfData["SALARIO"]).alias("SUMA_SALARIOS"),
+    f.max(dfData["SALARIO"]).alias("SALARIO_MAYOR")
+).alias("D").\
+filter(f.col("D.EDAD") > 35).\
+filter(f.col("D.SUMA_SALARIOS") > 5000).\
+filter(f.col("D.SALARIO_MAYOR") > 1000)
+
+dfResultado.show()
+
+
+
+
+
+## ESCRITURA:
+import pyspark.sql.functions as f
+#Leemos los datos con SPARK SQL
+dfData = spark.sql("SELECT * FROM TEMPORAL.CLIENTE")
+
+#Agrupamos los datos
+dfResultado = dfData.groupBy(dfData["EDAD"]).agg(
+    f.count(dfData["EDAD"]).alias("CANTIDAD"),
+    f.min(dfData["FECHA_INGRESO"]).alias("FECHA_CONTRATO_MAS_RECIENTE"),
+    f.sum(dfData["SALARIO"]).alias("SUMA_SALARIOS"),
+    f.max(dfData["SALARIO"]).alias("SALARIO_MAYOR")
+)
+
+#Mostramos los datos
+dfResultado.show()
+
+#Almacenamiento
+dfResultado.write.mode("overwrite").format("parquet").option("compression", "snappy").save("/proyectos/temporal/dfResultado")
+
+#[HADOOP] CONSULTEMOS EN HADOOP
+#hdfs dfs -ls /proyectos/temporal/dfResultado
+
+
+#Leemos la carpeta
+dfResultadoRead = spark.read.format("parquet").load("/proyectos/temporal/dfResultado")
+
+#Mostramos los datos
+dfResultadoRead.show()
+
+
+
+#################################
+# INSERCION DE LA INFORMACION EN LA TABLA TABON_TRANSACCIONES
+
+import pyspark.sql.functions as f
+
+dfPersona = spark.sql('SELECT * FROM TEMPORAL.CLIENTE')
+dfEmpresa = spark.sql('SELECT * FROM TEMPORAL.EMPRESA')
+dfTransaccion = spark.sql('SELECT * FROM TEMPORAL.TRANSACCION')
+
+# Procesamiento
+
+#PASO 1: OBTENER LOS DATOS DE LA PERSONA QUE REALIZÓ LA TRANSACCIÓN
+df1 = dfPersona.alias("P").join(
+	dfEmpresa.alias("E"), 
+	f.col("P.ID_EMPRESA") == f.col("E.ID")
+).select(
+	f.col("P.ID").alias("ID_PERSONA"),
+	f.col("P.NOMBRE").alias("NOMBRE_PERSONA"),
+	f.col("P.EDAD").alias("EDAD_PERSONA"),
+	f.col("P.SALARIO").alias("SALARIO_PERSONA"),
+	f.col("E.NOMBRE").alias("TRABAJO_PERSONA")
+)
+df1.show()
+
+
+#PASO 2: OBTENER EL NOMBRE DE LA EMPRESA EN DONDE TRABAJA LA PERSONA
+df2 = df1.alias("P").join(
+	dfTransaccion.alias("T"), 
+	f.col("P.ID_PERSONA") == f.col("T.ID_PERSONA")
+).select(
+	f.col("P.ID_PERSONA").alias("ID_PERSONA"),
+	f.col("P.NOMBRE_PERSONA").alias("NOMBRE_PERSONA"),
+	f.col("P.EDAD_PERSONA").alias("EDAD_PERSONA"),
+	f.col("P.SALARIO_PERSONA").alias("SALARIO_PERSONA"),
+	f.col("P.TRABAJO_PERSONA").alias("TRABAJO_PERSONA"),
+	f.col("T.ID_EMPRESA").alias("ID_EMPRESA_TRANSACCION"),
+	f.col("T.MONTO").alias("MONTO_TRANSACCION"),
+	f.col("T.FECHA").alias("FECHA_TRANSACCION")
+)
+
+#Mostramos los datos
+df2.show()
+
+#PASO 3: OBTENER EL NOMBRE DE LA EMPRESA EN DONDE SE REALIZÓ LA TRANSACCIÓN
+dfResultado = df2.alias("P").join(
+	dfEmpresa.alias("E"), 
+	f.col("P.ID_EMPRESA_TRANSACCION") == f.col("E.ID")
+).select(
+	f.col("P.ID_PERSONA").alias("ID_PERSONA"),
+	f.col("P.NOMBRE_PERSONA").alias("NOMBRE_PERSONA"),
+	f.col("P.EDAD_PERSONA").alias("EDAD_PERSONA"),
+	f.col("P.SALARIO_PERSONA").alias("SALARIO_PERSONA"),
+	f.col("P.TRABAJO_PERSONA").alias("TRABAJO_PERSONA"),
+	f.col("P.MONTO_TRANSACCION").alias("MONTO_TRANSACCION"),
+	f.col("P.FECHA_TRANSACCION").alias("FECHA_TRANSACCION"),
+	f.col("E.NOMBRE").alias("EMPRESA_TRANSACCION")
+)
+
+dfResultado.show()
+dfResultado.createOrReplaceTempView("dfResultado")
+
+#Almacenamos el resultado en Hive
+spark.sql('TRUNCATE TABLE TEMPORAL.TABLON_TRANSACCION SELECT * FROM dfResultado')
+spark.sql('INSERT INTO TEMPORAL.TABLON_TRANSACCIONES SELECT * FROM dfResultado')
+
+
+dfResultado.printSchema()
+
+dfTransacciones = spark.sql('SELECT * FROM TEMPORAL.TABLON_TRANSACCIONES')
+dfTransacciones.show()
+
+
+
+--- matar sesiones kill desde consola HDFS
+yarn application -list
+yarn application -kill application_1629543009811_0005
+
+
+
+
+
+
+
+
+
+
+
