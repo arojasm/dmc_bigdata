@@ -198,3 +198,34 @@ dfData.show(10)
 #Mostramos el esquema de la data
 dfData.printSchema()
 
+
+
+
+##########################################################################################################
+#
+# Procesos de Transformation
+#
+##########################################################################################################
+
+
+#SELECT ID, NOMBRE, EDAD FROM dfData
+#Seleccionamos algunas columnas
+df1 = dfData.select(dfData["ID"], dfData["NOMBRE"], dfData["EDAD"])
+
+#Mostramos los datos
+df1.show()
+
+##########################################################################################################
+#
+# Procesos de Transformation con FILTER
+#
+##########################################################################################################
+
+
+#SELECT * FROM dfData WHERE EDAD > 60
+
+#Hacemos un filtro
+df2 = dfData.filter(dfData["EDAD"] > 60)
+
+#Mostramos los datos
+df2.show()
